@@ -15,11 +15,19 @@ typedef enum _retorno TipoRetorno;
 ////////////////////////////////////////ESTRUCTURAS///////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct Linea{
-string palabra;
-int cantidadPalabras;
-Linea *ant;
-Linea *sig;
+//una palabra del texto (lista simple dentro de cada linea)
+struct nodoPalabra{
+    string palabra;
+    nodoPalabra *sig;
+}
+
+//una linea del texto (lista simple de lineas)
+struct nodoLinea{
+    nodoPalabra *primeraPalabra;
+    nodoPalabra *ultimaPalabra;
+    int cantPalabras;
+    nodoLinea *sig;
+    nodoLinea *ant;
 };
 
 struct Texto{
@@ -86,5 +94,5 @@ TipoRetorno AgregarIncorrectasAlDiccionario();
 
 
 void Inicializar(){
-    
+
 }
