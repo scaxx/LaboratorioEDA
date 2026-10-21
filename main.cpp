@@ -102,7 +102,9 @@ TipoRetorno AgregarIncorrectasAlDiccionario();
 
 
 void Inicializar(){
-
+    texto.primera = nullptr;
+    texto.ultima = nullptr;
+    texto.cantLineas = 0;
 }
 
 
@@ -115,9 +117,9 @@ TipoRetorno IngresarPalabraDiccionario(string palabra){
     if(palabra == ""){ //palabra está vacía
         return ERROR;
     }
-    int posicion = 1;
+    int posicion = 0;
     while (palabra[posicion] != '\0') {
-        if (palabra == " ") { //la palabra es un espacio o existe un espacio en el medio
+        if (palabra[posicion] == ' ') { //la palabra es un espacio o existe un espacio en el medio
             return ERROR;
         }
         posicion++;
