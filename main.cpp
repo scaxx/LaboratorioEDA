@@ -21,24 +21,21 @@ struct nodoPalabra{
     nodoPalabra *sig;
     nodoPalabra *ant;
 };
-typedef nodoPalabra * Palabra; 
 
 //una linea del texto (lista doble con cola)
 struct nodoLinea{
     nodoPalabra *primeraPalabra;
     nodoPalabra *ultimaPalabra;
-    int cantPalabras;
+    unsigned int cantPalabras;
     nodoLinea *sig;
     nodoLinea *ant;
 };
-typedef nodoLinea * Linea;
 
-struct nodoTexto{
+struct Texto{
     nodoLinea *primera;
     nodoLinea *ultima;
-    int cantidadLineas;
+    unsigned int cantLineas;
 };
-typedef nodoTexto * Texto;
 
 struct nodoDiccionario{
     string palabra;
@@ -47,6 +44,11 @@ struct nodoDiccionario{
 };
 typedef nodoDiccionario * Diccionario; 
 
+
+///////////////////VARIABLES GLOBALES///////////////////
+
+nodoDiccionario * Diccionario = nullptr;
+Texto * texto = nullptr; 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////FIRMAS/////////////////////////////////////////////////////
