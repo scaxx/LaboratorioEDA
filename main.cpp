@@ -15,13 +15,15 @@ typedef enum _retorno TipoRetorno;
 ////////////////////////////////////////ESTRUCTURAS///////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//una palabra del texto (lista simple dentro de cada linea)
+//una palabra del texto (lista doble dentro de linea)
 struct nodoPalabra{
     string palabra;
     nodoPalabra *sig;
-}
+    nodoPalabra *ant;
+};
+typedef nodoPalabra * Palabra; 
 
-//una linea del texto (lista simple de lineas)
+//una linea del texto (lista doble con cola)
 struct nodoLinea{
     nodoPalabra *primeraPalabra;
     nodoPalabra *ultimaPalabra;
@@ -29,18 +31,22 @@ struct nodoLinea{
     nodoLinea *sig;
     nodoLinea *ant;
 };
+typedef nodoLinea * Linea;
 
-struct Texto{
-Linea *primera;
-Linea *ultima;
-int cantidadLineas;
+struct nodoTexto{
+    nodoLinea *primera;
+    nodoLinea *ultima;
+    int cantidadLineas;
 };
+typedef nodoTexto * Texto;
 
 struct nodoDiccionario{
-string palabra;
-nodoDiccionario *izq;
-nodoDiccionario *der;
+    string palabra;
+    nodoDiccionario *izq;   
+    nodoDiccionario *der;
 };
+typedef nodoDiccionario * Diccionario; 
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////FIRMAS/////////////////////////////////////////////////////
