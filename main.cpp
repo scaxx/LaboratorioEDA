@@ -47,8 +47,8 @@ typedef nodoDiccionario * Diccionario;
 
 ///////////////////VARIABLES GLOBALES///////////////////
 
-nodoDiccionario * Diccionario = nullptr;
-Texto * texto = nullptr; 
+nodoDiccionario * diccionario = nullptr;
+Texto texto = nullptr; 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////FIRMAS/////////////////////////////////////////////////////
@@ -104,3 +104,52 @@ TipoRetorno AgregarIncorrectasAlDiccionario();
 void Inicializar(){
 
 }
+
+
+
+
+
+
+TipoRetorno IngresarPalabraDiccionario(string palabra){
+   
+    if(palabra == ""){ //palabra está vacía
+        return ERROR;
+    }
+    int posicion = 1;
+    while (palabra[posicion] != '\0') {
+        if (palabra == " ") { //la palabra es un espacio o existe un espacio en el medio
+            return ERROR;
+        }
+        posicion++;
+    }
+    // arbol vacío u hoja. 
+    if (diccionario == nullptr){
+        diccionario = new nodoDiccionario;
+        diccionario->palabra = palabra;
+        diccionario->izq= NULL;
+        diccionario->der = NULL;
+        return OK;
+    }
+    // la palabra ya existe
+    if(palabra == diccionario->palabra){
+        return ERROR;
+    }
+
+    Diccionario raiz = diccionario;
+    TipoRetorno res;
+    //buscamos si existe la palabra en sus hijos.
+    if (palabra < raiz->palabra){
+        diccionario = raiz->izq;
+        res= IngresarPalabraDiccionario(palabra);
+        raiz->izq = diccionario;
+    }
+    else{
+        diccionario = raiz->der;
+        res= IngresarPalabraDiccionario (palabra);
+        raiz->der = diccionario;
+    }
+
+    diccionario = raiz;
+    return res; 
+
+}; 
