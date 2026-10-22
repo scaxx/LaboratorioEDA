@@ -12,17 +12,17 @@ enum _retorno {OK,ERROR,NO_IMPLEMENTADA};
 typedef enum _retorno TipoRetorno;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////ESTRUCTURAS///////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////ESTRUCTURAS////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//una palabra del texto (lista doble dentro de linea)
+//Una palabra del texto (lista doble dentro de linea)
 struct nodoPalabra{
     string palabra;
     nodoPalabra *sig;
     nodoPalabra *ant;
 };
 
-//una linea del texto (lista doble con cola)
+//Una linea del texto (lista doble con cola)
 struct nodoLinea{
     nodoPalabra *primeraPalabra;
     nodoPalabra *ultimaPalabra;
@@ -31,12 +31,14 @@ struct nodoLinea{
     nodoLinea *ant;
 };
 
+//Estructura del texto. Tiene punteros a la primera línea y a la última para haccer más fácil el recorrido
 struct Texto{
     nodoLinea *primera;
     nodoLinea *ultima;
     unsigned int cantLineas;
 };
 
+//Estructura diccionario (árbol binario de búsqueda)
 struct nodoDiccionario{
     string palabra;
     nodoDiccionario *izq;   
@@ -51,8 +53,8 @@ nodoDiccionario * diccionario = nullptr;
 Texto texto = nullptr; 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////FIRMAS/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////FIRMAS/////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //FIRMAS//
 //1
@@ -114,44 +116,46 @@ void Inicializar(){
 
 TipoRetorno IngresarPalabraDiccionario(string palabra){
    
-    if(palabra == ""){ //palabra está vacía
+    if(palabra == ""){ //La palabra está vacía
         return ERROR;
     }
     int posicion = 0;
     while (palabra[posicion] != '\0') {
-        if (palabra[posicion] == ' ') { //la palabra es un espacio o existe un espacio en el medio
+        if (palabra[posicion] == ' ') { //La palabra es un espacio o existe un espacio en el medio
             return ERROR;
         }
         posicion++;
     }
-    // arbol vacío u hoja. 
+    // Árbol vacío u hoja. 
     if (diccionario == nullptr){
         diccionario = new nodoDiccionario;
         diccionario->palabra = palabra;
-        diccionario->izq= NULL;
-        diccionario->der = NULL;
+        diccionario->izq= nullptr;
+        diccionario->der = nullptr;
         return OK;
     }
-    // la palabra ya existe
+    //La palabra ya existe
     if(palabra == diccionario->palabra){
         return ERROR;
     }
 
+    //Hacemos una copia del puntero al diccionario e inicializamos la variable res que guarda lo que devuelve la llamada interna (OK, ERROR)
     Diccionario raiz = diccionario;
     TipoRetorno res;
-    //buscamos si existe la palabra en sus hijos.
+
+    //La palabra no está en la raíz, si es menor a la palabra que tiene el nodo actual vamos a buscar por la izquierda
     if (palabra < raiz->palabra){
-        diccionario = raiz->izq;
-        res= IngresarPalabraDiccionario(palabra);
-        raiz->izq = diccionario;
-    }
-    else{
-        diccionario = raiz->der;
-        res= IngresarPalabraDiccionario (palabra);
-        raiz->der = diccionario;
+        diccionario = raiz->izq; //Trabajamos con el subárbol izquierdo
+        res= IngresarPalabraDiccionario(palabra); //Llamamos a la función para trabajar con el siguiente nodo del árbol
+        raiz->izq = diccionario; //Si se agregó otro nodo al árbol, enganchamos el nodo nuevo a su padre
+    } else { //Si la palabra no es menor al nodo actual, entonces buscamos por la derecha
+        diccionario = raiz->der; //Trabajamos con el subárbol derecho
+        res= IngresarPalabraDiccionario (palabra); //Llamamos a la función para trabajar con el siguiente nodo del árbol
+        raiz->der = diccionario; //Si se agregó otro nodo al árbol, enganchamos el nodo nuevo a su padre
     }
 
+    //El puntero del diccionario había quedado apuntando a un hijo, ahora lo devolvemos a la raíz y devolvemos lo que dio la llamada interna (OK, ERROR)
     diccionario = raiz;
     return res; 
 
-}; 
+}
