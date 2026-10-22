@@ -103,10 +103,16 @@ TipoRetorno AgregarIncorrectasAlDiccionario();
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void Inicializar(){
+void Inicializar(){ //Creo que se hace así pero no sé si entendí bien, habría que revisarla
+    //Texto no tiene líneas para comenzar de cero
     texto.primera = nullptr;
     texto.ultima = nullptr;
     texto.cantLineas = 0;
+
+    //Diccionario no tiene palabras y sus punteros apuntan a nullptr para comenzar de cero
+    diccionario->palabra = "\0";
+    diccionario->izq = nullptr;
+    diccionario->der = nullptr;
 }
 
 
@@ -123,7 +129,7 @@ TipoRetorno IngresarPalabraDiccionario(string palabra){
     }
 
     int posicion = 0;
-    
+
     while (palabra[posicion] != '\0') {
 
         if (palabra[posicion] == ' ') { //La palabra es un espacio o existe un espacio en el medio
