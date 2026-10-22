@@ -49,8 +49,8 @@ typedef nodoDiccionario * Diccionario;
 
 ///////////////////VARIABLES GLOBALES///////////////////
 
-nodoDiccionario * diccionario = nullptr;
-Texto texto = nullptr; 
+nodoDiccionario * diccionario = nullptr; //Puntero a la raíz del diccionario
+Texto texto; //Estructura texto, no es un puntero
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////FIRMAS/////////////////////////////////////////////////////
@@ -117,26 +117,36 @@ void Inicializar(){
 TipoRetorno IngresarPalabraDiccionario(string palabra){
    
     if(palabra == ""){ //La palabra está vacía
+
         return ERROR;
+
     }
+
     int posicion = 0;
+    
     while (palabra[posicion] != '\0') {
+
         if (palabra[posicion] == ' ') { //La palabra es un espacio o existe un espacio en el medio
             return ERROR;
         }
         posicion++;
+
     }
     // Árbol vacío u hoja. 
     if (diccionario == nullptr){
+
         diccionario = new nodoDiccionario;
         diccionario->palabra = palabra;
         diccionario->izq= nullptr;
         diccionario->der = nullptr;
         return OK;
+
     }
     //La palabra ya existe
     if(palabra == diccionario->palabra){
+
         return ERROR;
+    
     }
 
     //Hacemos una copia del puntero al diccionario e inicializamos la variable res que guarda lo que devuelve la llamada interna (OK, ERROR)
@@ -145,17 +155,59 @@ TipoRetorno IngresarPalabraDiccionario(string palabra){
 
     //La palabra no está en la raíz, si es menor a la palabra que tiene el nodo actual vamos a buscar por la izquierda
     if (palabra < raiz->palabra){
+
         diccionario = raiz->izq; //Trabajamos con el subárbol izquierdo
         res= IngresarPalabraDiccionario(palabra); //Llamamos a la función para trabajar con el siguiente nodo del árbol
         raiz->izq = diccionario; //Si se agregó otro nodo al árbol, enganchamos el nodo nuevo a su padre
+
     } else { //Si la palabra no es menor al nodo actual, entonces buscamos por la derecha
+
         diccionario = raiz->der; //Trabajamos con el subárbol derecho
         res= IngresarPalabraDiccionario (palabra); //Llamamos a la función para trabajar con el siguiente nodo del árbol
         raiz->der = diccionario; //Si se agregó otro nodo al árbol, enganchamos el nodo nuevo a su padre
+
     }
 
     //El puntero del diccionario había quedado apuntando a un hijo, ahora lo devolvemos a la raíz y devolvemos lo que dio la llamada interna (OK, ERROR)
     diccionario = raiz;
     return res; 
+
+}
+
+TipoRetorno ImprimirDiccionario() {
+
+    //Si el diccionario está vacío
+    if (diccionario == nullptr) {
+
+        cout << "El diccionario está vacío" << endl;
+        return OK;
+
+    }
+
+    //Guardamos la raíz para no perderla
+    Diccionario raiz = diccionario;
+
+    //Primero devolvemos todo lo de la izquierda
+    if (raiz->izq != nullptr) { //Verifico que el siguiente nodo a la izquierda no sea nullptr porque sino se ejecuta el caso base (diccionario vacío)
+
+        diccionario = raiz->izq; //Guardo el nuevo subárbol que voy a utilizar
+        ImprimirDiccionario(); //Llamo a la función para imprimir el subárbol
+        diccionario = raiz; //Vuelvo a ubicar la raíz para no perderla
+
+    }
+
+    //Ahora imprimimos la palabra actual
+    cout << raiz->palabra << endl;
+
+    //Ahora devolvemos todo lo del lado derecho
+    if (raiz->der != nullptr) { //Verifico que el siguiente nodo a la derecha no sea nullptr (mismo caso que hacia la izquierda)
+
+        diccionario = raiz->der; //Guardo el nuevo subárbol que voy a utilizar
+        ImprimirDiccionario(); //Llamo a la función para imprimir el subárbol
+        diccionario = raiz; //Vuelvo a ubicar la raíz para no perderla
+
+    }
+
+    return OK;
 
 }
