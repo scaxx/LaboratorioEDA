@@ -103,16 +103,26 @@ TipoRetorno AgregarIncorrectasAlDiccionario();
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void Inicializar(){ //Creo que se hace así pero no sé si entendí bien, habría que revisarla
+void Inicializar(){ //Iniciamos de cero, se liberan los valores anteriores antes de comenzar
+    
+    //Verifico si el texto no está vacío
+    if (texto.cantLineas > 0) {
+        
+    }
+    
     //Texto no tiene líneas para comenzar de cero
-    texto.primera = nullptr;
-    texto.ultima = nullptr;
-    texto.cantLineas = 0;
+    //texto.primera = nullptr;
+    //texto.ultima = nullptr;
+    //texto.cantLineas = 0;
 
-    //Diccionario no tiene palabras y sus punteros apuntan a nullptr para comenzar de cero
-    diccionario->palabra = "\0";
-    diccionario->izq = nullptr;
-    diccionario->der = nullptr;
+    //Verifico si el diccionario no está vacío
+    if (diccionario->palabra != "\0") {
+        
+    }
+    //Diccionario no tiene palabras y sus punteros apuntan a nullptr para comenzar de cero   
+    //diccionario->palabra = "\0";
+    //diccionario->izq = nullptr;
+    //diccionario->der = nullptr;
 }
 
 
