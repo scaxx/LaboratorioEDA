@@ -213,27 +213,13 @@ void Destruir () {
 
 }
 
-void Inicializar(){ //Iniciamos de cero, se liberan los valores anteriores antes de comenzar
+//Iniciamos de cero, se liberan los valores anteriores antes de comenzar
+void Inicializar(){ 
     
     //Llamo a esta función para vaciar el texto y el diccionario
     Destruir();
     
-    
-    //Texto no tiene líneas para comenzar de cero
-    texto.primera = nullptr;
-    texto.ultima = nullptr;
-    texto.cantLineas = 0;
-    
-    //Diccionario no tiene palabras y sus punteros apuntan a nullptr para comenzar de cero   
-    diccionario->palabra = "\0";
-    diccionario->izq = nullptr;
-    diccionario->der = nullptr;
 }
-
-
-
-
-
 
 TipoRetorno IngresarPalabraDiccionario(string palabra){
    
