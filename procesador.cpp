@@ -21,6 +21,7 @@ struct nodoPalabra{
     nodoPalabra *sig;
     nodoPalabra *ant;
 };
+typedef nodoPalabra * Palabra; 
 
 //Una linea del texto (lista doble con cola)
 struct nodoLinea{
@@ -30,6 +31,7 @@ struct nodoLinea{
     nodoLinea *sig;
     nodoLinea *ant;
 };
+typedef nodoLinea * Linea; 
 
 //Estructura del texto. Tiene punteros a la primera línea y a la última para haccer más fácil el recorrido
 struct Texto{
@@ -59,23 +61,23 @@ Texto texto; //Estructura texto, no es un puntero
 //FIRMAS//
 //1
 void Inicializar();
-void ImprimirTexto();
-void ImprimirDiccionario();
+//void ImprimirTexto();
+//void ImprimirDiccionario();
 
 // 2
 void Destruir();
 
 //3
 TipoRetorno InsertarLinea();
-void InsertarLinea();
-void ImprimirTexto();
+//void InsertarLinea();
+//void ImprimirTexto();
 
 // 4
 TipoRetorno BorrarLinea(Posicion linea);
 
 //5
 TipoRetorno InsertarPalabra(Posicion linea, Posicion pos, std::string palabra);
-InsertarPalabra();
+//void InsertarPalabra();
 
 //6
 TipoRetorno BorrarPalabra(Posicion linea, Posicion pos);
@@ -95,34 +97,65 @@ TipoRetorno ImprimirTextoIncorrecto();
 //11
 TipoRetorno AgregarIncorrectasAlDiccionario();
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////FIRMAS AUXILIARES&/////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////FUNCIONES/////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//Función para limpiar texto y diccionario
+void Destruir () {
+
+    //Vaciamos el diccionario
+    if (diccionario != nullptr) { //Si el diccionario no está vacío comenzamos a operar
+
+        Diccionario raiz = diccionario; //Guardamos la raíz del diccionario para operar
+
+        //Revisamos que el lado izquierdo no esté vacío
+        if (raiz->izq != nullptr) {
+
+            //Nos movemos hacia la izquierda
+            diccionario = raiz->izq;
+            Destruir(); //Llamamos a la función para seguir recorriendo recursivamente
+
+        }
+
+        //Ahora revisamos que el lado derecho no esté vacío
+        if (raiz->der != nullptr) {
+
+            //Nos movemos hacia la derecha
+            diccionario = raiz->der;
+            Destruir(); //Llamamos a la función para seguir recorriendo recursivamente
+
+        }
+
+        //Borramos el nodo actual
+        delete raiz;
+        diccionario = nullptr; //Dejamos el nodo en null
+
+    }
+
+
+}
 
 void Inicializar(){ //Iniciamos de cero, se liberan los valores anteriores antes de comenzar
     
-    //Verifico si el texto no está vacío
-    if (texto.cantLineas > 0) {
-        
-    }
+    //Llamo a esta función para vaciar el texto y el diccionario
+    Destruir();
+    
     
     //Texto no tiene líneas para comenzar de cero
-    //texto.primera = nullptr;
-    //texto.ultima = nullptr;
-    //texto.cantLineas = 0;
-
-    //Verifico si el diccionario no está vacío
-    if (diccionario->palabra != "\0") {
-        
-    }
+    texto.primera = nullptr;
+    texto.ultima = nullptr;
+    texto.cantLineas = 0;
+    
     //Diccionario no tiene palabras y sus punteros apuntan a nullptr para comenzar de cero   
-    //diccionario->palabra = "\0";
-    //diccionario->izq = nullptr;
-    //diccionario->der = nullptr;
+    diccionario->palabra = "\0";
+    diccionario->izq = nullptr;
+    diccionario->der = nullptr;
 }
 
 
@@ -167,19 +200,19 @@ TipoRetorno IngresarPalabraDiccionario(string palabra){
 
     //Hacemos una copia del puntero al diccionario e inicializamos la variable res que guarda lo que devuelve la llamada interna (OK, ERROR)
     Diccionario raiz = diccionario;
-    TipoRetorno res;
+    TipoRetorno res; //Inicializamos esta variable para guardar el resultado de cada llamada, al final retornamos este resultado
 
     //La palabra no está en la raíz, si es menor a la palabra que tiene el nodo actual vamos a buscar por la izquierda
     if (palabra < raiz->palabra){
 
         diccionario = raiz->izq; //Trabajamos con el subárbol izquierdo
-        res= IngresarPalabraDiccionario(palabra); //Llamamos a la función para trabajar con el siguiente nodo del árbol
+        res = IngresarPalabraDiccionario(palabra); //Llamamos a la función para trabajar con el siguiente nodo del árbol
         raiz->izq = diccionario; //Si se agregó otro nodo al árbol, enganchamos el nodo nuevo a su padre
 
     } else { //Si la palabra no es menor al nodo actual, entonces buscamos por la derecha
 
         diccionario = raiz->der; //Trabajamos con el subárbol derecho
-        res= IngresarPalabraDiccionario (palabra); //Llamamos a la función para trabajar con el siguiente nodo del árbol
+        res = IngresarPalabraDiccionario (palabra); //Llamamos a la función para trabajar con el siguiente nodo del árbol
         raiz->der = diccionario; //Si se agregó otro nodo al árbol, enganchamos el nodo nuevo a su padre
 
     }
@@ -195,7 +228,7 @@ TipoRetorno ImprimirDiccionario() {
     //Si el diccionario está vacío
     if (diccionario == nullptr) {
 
-        cout << "El diccionario está vacío" << endl;
+        cout << "Diccionario vacio" << endl;
         return OK;
 
     }
@@ -203,7 +236,7 @@ TipoRetorno ImprimirDiccionario() {
     //Guardamos la raíz para no perderla
     Diccionario raiz = diccionario;
 
-    //Primero devolvemos todo lo de la izquierda
+    //Primero imprimimos todo lo de la izquierda
     if (raiz->izq != nullptr) { //Verifico que el siguiente nodo a la izquierda no sea nullptr porque sino se ejecuta el caso base (diccionario vacío)
 
         diccionario = raiz->izq; //Guardo el nuevo subárbol que voy a utilizar
@@ -215,7 +248,7 @@ TipoRetorno ImprimirDiccionario() {
     //Ahora imprimimos la palabra actual
     cout << raiz->palabra << endl;
 
-    //Ahora devolvemos todo lo del lado derecho
+    //Ahora imprimimos todo lo del lado derecho
     if (raiz->der != nullptr) { //Verifico que el siguiente nodo a la derecha no sea nullptr (mismo caso que hacia la izquierda)
 
         diccionario = raiz->der; //Guardo el nuevo subárbol que voy a utilizar
@@ -225,5 +258,62 @@ TipoRetorno ImprimirDiccionario() {
     }
 
     return OK;
+
+}
+
+/*Definimos la función para insertar líneas con O(1),
+por lo que no recorremos el texto cada vez que deseamos insertar
+una nueva línea, sólo miramos la última*/
+TipoRetorno InsertarLinea() {
+
+    //Creo la nueva línea que se va a insertar
+    Linea nuevaLinea = new nodoLinea;
+    //Agregamos la línea en nullptr
+    nuevaLinea->sig = nullptr; 
+    //Agregamos la línea en nullptr
+    nuevaLinea->ant = nullptr; 
+    //Marco a dónde apuntan los punteros de primera y última palabra
+    nuevaLinea->primeraPalabra = nullptr;
+    nuevaLinea->ultimaPalabra = nullptr;
+    //Seteamos la cantidad de palabras que tiene la línea
+    nuevaLinea->cantPalabras = 0;
+
+    //Si es la primera línea de todo el texto
+    if (texto.cantLineas == 0) {
+        
+        //Ubico la nueva línea en su posición en el texto
+        texto.primera = nuevaLinea;
+        texto.ultima = nuevaLinea;
+        texto.cantLineas++;
+
+    } else { //No es la primera línea del texto
+
+        //Ubico la nueva línea al final del texto
+        nuevaLinea->ant = texto.ultima; //Engancho el ant de la línea nueva apunta a la última que está en el texto 
+        texto.ultima->sig = nuevaLinea; //Engancho el sig de la última línea apunta a la línea nueva
+        texto.ultima = nuevaLinea; //Ahora la última línea del texto es la línea que acabamos de agregar
+        texto.cantLineas++; //Aumentamos el contador de líneas
+    
+    }
+
+    return OK; //El enunciado dice "Siempre retorna OK"
+
+}
+
+int main() {
+
+    //Pruebas
+    /*
+    Inicializar();
+    ImprimirDiccionario();
+    IngresarPalabraDiccionario("llueve");
+    IngresarPalabraDiccionario("Hoy");
+    IngresarPalabraDiccionario("poco");
+    IngresarPalabraDiccionario("paraguas");
+    IngresarPalabraDiccionario("y");
+    IngresarPalabraDiccionario("hoy");
+    ImprimirDiccionario();
+    return 0;
+    */
 
 }
