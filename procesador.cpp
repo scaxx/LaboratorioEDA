@@ -296,7 +296,59 @@ TipoRetorno InsertarLinea() {
     
     }
 
-    return OK; //El enunciado dice "Siempre retorna OK"
+    //La consigna dice "Siempre retorna OK"
+    return OK; 
+
+}
+
+TipoRetorno ImprimirTexto() {
+
+    //Primero verificamos si el texto está vacío
+    if (texto.cantLineas == 0) {
+
+        cout << "Texto vacio" << endl;
+        //La consigna dice "Retorna OK"
+        return OK;
+
+    }
+
+    //Un contador para saber en qué línea estoy
+    Posicion linea = 1;
+    //Un puntero a la primera línea del texto
+    Linea auxLinea = texto.primera;
+    //Un puntero a null para manejar las palabras de las líneas
+    nodoPalabra * auxPalabra = nullptr;
+    
+    //Bucle para recorrer las líneas del texto
+    while (linea <= texto.cantLineas) {
+
+        //Imprimimos el número de línea
+        cout << linea << ":";
+        //Miramos la nueva palabra que vamos a utilizar
+        auxPalabra = auxLinea->primeraPalabra;
+
+        //Bucle para recorrer las palabras de cada línea
+        while (auxPalabra != nullptr) {
+
+            //Imprimo la palabra y un espacio
+            cout << " " << auxPalabra->palabra;
+
+            //Nos movemos a la siguiente palabra
+            auxPalabra = auxPalabra->sig;
+
+        }
+        
+        //Pasamos a la siguiente línea
+        cout << endl;
+        //Nos movemos a la siguiente línea
+        auxLinea = auxLinea->sig;
+        //Aumentamos el contador de líneas
+        linea++;
+
+    }
+
+    //La consigna dice "Retorna OK"
+    return OK;
 
 }
 
