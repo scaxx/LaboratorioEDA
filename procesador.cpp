@@ -101,13 +101,17 @@ TipoRetorno AgregarIncorrectasAlDiccionario();
 ////////////////////////////////////////FIRMAS AUXILIARES&/////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//Función auxiliar que recibe el diccionario y elimina todo su contenido
+void DestruirDiccionario();
+//Función auxiliar que recibe el texto y elimina todo su contenido
+void DestruirTexto();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////FUNCIONES/////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//Función para limpiar texto y diccionario
-void Destruir () {
+//Función auxiliar que trabaja con el diccionario y elimina todo su contenido
+void DestruirDiccionario() {
 
     //Vaciamos el diccionario
     if (diccionario != nullptr) { //Si el diccionario no está vacío comenzamos a operar
@@ -119,7 +123,7 @@ void Destruir () {
 
             //Nos movemos hacia la izquierda
             diccionario = raiz->izq;
-            Destruir(); //Llamamos a la función para seguir recorriendo recursivamente
+            DestruirDiccionario(); //Llamamos a la función para seguir recorriendo recursivamente
 
         }
 
@@ -128,7 +132,7 @@ void Destruir () {
 
             //Nos movemos hacia la derecha
             diccionario = raiz->der;
-            Destruir(); //Llamamos a la función para seguir recorriendo recursivamente
+            DestruirDiccionario(); //Llamamos a la función para seguir recorriendo recursivamente
 
         }
 
@@ -138,6 +142,74 @@ void Destruir () {
 
     }
 
+}
+
+//Función auxiliar que trabaja con el texto y elimina todo su contenido
+void DestruirTexto() {
+
+    //Vaciamos el texto
+    if (texto.cantLineas != 0) { //Si el texto tiene 1 o más líneas
+
+        //Un contador para saber en qué línea estoy
+        Posicion linea = texto.cantLineas;
+        //Un puntero a la última línea del texto
+        Linea auxLinea = texto.ultima;
+        //Un puntero auxiliar para eliminar líneas
+        Linea aBorrarL = nullptr;
+        //Un puntero a null para manejar las palabras de las líneas
+        nodoPalabra * auxPalabra = nullptr;
+        //Un puntero auxiliar para eliminar palabras;
+        nodoPalabra * aBorrarP = nullptr;
+        
+        //Bucle para recorrer las líneas del texto
+        while (linea > 0) {
+
+            //Miramos la nueva palabra que vamos a utilizar
+            auxPalabra = auxLinea->ultimaPalabra;
+
+            //Bucle para recorrer las palabras de cada línea
+            while (auxPalabra != nullptr) {
+
+                //Guardamos la última palabra de la línea
+                aBorrarP = auxPalabra;
+                //Nos movemos a la palabra anterior
+                auxPalabra = auxPalabra->ant;
+                //Borramos la última palabra
+                delete aBorrarP;
+
+            }
+            
+            //Guardamos la línea
+            aBorrarL = auxLinea;
+            //Nos movemos a la línea anterior
+            auxLinea = auxLinea->ant;
+            //Disminuimos el contador de líneas
+            linea--;
+            //Borramos la última línea
+            delete aBorrarL;
+
+        }
+
+        //Dejamos el puntero en nullptr
+        aBorrarP = nullptr;
+        //Dejamos el puntero en null
+        aBorrarL = nullptr;
+
+    }
+
+    //Seteo los valores del texto a cero
+    texto.cantLineas = 0;
+    texto.primera = nullptr;
+    texto.ultima = nullptr;
+
+}
+
+//Función para limpiar texto y diccionario
+void Destruir () {
+
+    //LLamamos a las funciones auxiliares que me permiten liberar el diccionario y el texto
+    DestruirDiccionario();
+    DestruirTexto();    
 
 }
 
@@ -355,8 +427,11 @@ TipoRetorno ImprimirTexto() {
 int main() {
 
     //Pruebas
-    /*
     Inicializar();
+    ImprimirTexto();
+    InsertarLinea();
+    InsertarLinea();
+    ImprimirTexto();
     ImprimirDiccionario();
     IngresarPalabraDiccionario("llueve");
     IngresarPalabraDiccionario("Hoy");
@@ -366,6 +441,5 @@ int main() {
     IngresarPalabraDiccionario("hoy");
     ImprimirDiccionario();
     return 0;
-    */
 
 }
