@@ -106,6 +106,9 @@ void DestruirDiccionario();
 //Función auxiliar que recibe el texto y elimina todo su contenido
 void DestruirTexto();
 
+//auxiliar para imprimir texto incorrecto
+bool existeEnDiccionario(Diccionario d, string palabra);
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////FUNCIONES/////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -221,6 +224,94 @@ void Inicializar(){
     
 }
 
+
+/////4////
+
+TipoRetorno BorrarLinea(Posicion linea){
+    //Chequeo si el numero que me pasa es 0, porque la linea comienza en 1
+    // Y ademas si la posicion que me pasa es mayor a la cantidad de lineas retorna error. 
+    if(linea == 0 || texto.cantLineas < linea){
+        return ERROR; 
+    }
+    //Creo un auxiliar para desplazarme y busco la posición con un for. 
+    Linea aBorrar = texto.primera; 
+    for(Posicion i = 1; i < linea; i++){
+        aBorrar = aBorrar-> sig; 
+    }
+    //creo auxiliar para borrar las palabras de la linea y no dejar memoria colgada
+    Palabra pActual = aBorrar ->primeraPalabra;
+    Palabra pBorrar; 
+
+    while (pActual != nullptr){
+        pBorrar = pActual;
+        pActual = pActual->sig;
+        delete pBorrar; 
+    }
+    //Conecto en caso de que el ant no sea null
+    if (aBorrar-> ant != nullptr){
+        aBorrar->ant->sig = aBorrar->sig; 
+    }
+    else{ //si es null actualizo variable global
+        texto.primera = aBorrar->sig;
+    }//Lo mismo para el sig
+    if(aBorrar->sig != nullptr){
+        aBorrar->sig->ant = aBorrar->ant;
+    }
+    else{
+        texto.ultima= aBorrar->ant;
+    }
+    //borro y actualizo la cantidad de lineas.
+    delete aBorrar;
+    texto.cantLineas --;
+    return OK;
+
+}
+
+//6
+TipoRetorno BorrarPalabra(Posicion linea, Posicion pos){
+    
+    if(linea==0 || linea > texto.cantLineas){
+        return ERROR;      
+    }
+    Linea lActual = texto.primera;
+    // avanzamos hasta la linea deseada
+    for( Posicion i = 1; i< linea; i++){
+        lActual = lActual->sig; 
+    }
+        //Chequeo que la pos no sea 0 ni mayor a la cantidad de palabras
+        if (pos == 0 || pos > lActual->cantPalabras) {
+            return ERROR;
+        }
+        // Comienzo a buscar en la primera palabra de esa línea
+        Palabra pActual = lActual->primeraPalabra;
+
+        // Avanza hasta la posición pos
+        for (Posicion j = 1; j < pos; j++) {
+            pActual = pActual->sig;
+        }
+        //pActual contiene la palabra a borrar
+        if( pActual->ant != nullptr){ //si su ant no es nullptr salteo pActual y la conecto con la sig
+            pActual->ant->sig = pActual->sig;
+        }else{ //si es la primera actualizo primeraPalabra;
+            lActual->primeraPalabra = pActual->sig;
+        }
+        //ahora reviso a la derecha
+        if(pActual->sig != nullptr){
+            pActual->sig ->ant = pActual->ant;
+        }else{
+            lActual->ultimaPalabra = pActual->ant;
+        }
+
+        delete pActual; 
+        lActual->cantPalabras --;
+        return OK;
+
+}
+
+
+
+
+
 TipoRetorno IngresarPalabraDiccionario(string palabra){
    
     if(palabra == ""){ //La palabra está vacía
@@ -256,11 +347,13 @@ TipoRetorno IngresarPalabraDiccionario(string palabra){
     
     }
 
-    //Hacemos una copia del puntero al diccionario e inicializamos la variable res que guarda lo que devuelve la llamada interna (OK, ERROR)
+    //Hacemos una copia del puntero al diccionario e inicializamos 
+    //la variable res que guarda lo que devuelve la llamada interna (OK, ERROR)
     Diccionario raiz = diccionario;
     TipoRetorno res; //Inicializamos esta variable para guardar el resultado de cada llamada, al final retornamos este resultado
 
-    //La palabra no está en la raíz, si es menor a la palabra que tiene el nodo actual vamos a buscar por la izquierda
+    //La palabra no está en la raíz, si es menor a la palabra
+    // que tiene el nodo actual vamos a buscar por la izquierda
     if (palabra < raiz->palabra){
 
         diccionario = raiz->izq; //Trabajamos con el subárbol izquierdo
@@ -409,6 +502,77 @@ TipoRetorno ImprimirTexto() {
     return OK;
 
 }
+//auxiliar para chequear si la palabra existe en el diccionario o no.  
+bool existeEnDiccionario(Diccionario d, string palabra){
+    if(d == nullptr){
+        return false;
+    }
+    if(palabra ==d->palabra){
+        return true;
+    }
+    if(d->palabra < palabra){
+       return existeEnDiccionario (d->der, palabra);
+    }else{
+       return existeEnDiccionario (d->izq , palabra); 
+    }
+}
+
+//10
+TipoRetorno ImprimirTextoIncorrecto(){
+    if(texto.cantLineas == 0){
+        cout << "Texto vacio" << endl; 
+        return OK;
+    }
+    Linea auxLinea = texto.primera;
+    Posicion numLinea = 1;
+    
+    while(auxLinea !=nullptr){
+        cout << numLinea << ":";
+        
+        Palabra auxPalabra =auxLinea->primeraPalabra;
+        // Bucle interno para recorrer las palabras de la línea actual
+        while(auxPalabra != nullptr){
+            // Si NO existe en el diccionario, se imprime.
+            if (!existeEnDiccionario (diccionario, auxPalabra->palabra)){
+                cout << " " << auxPalabra->palabra;
+            }
+            auxPalabra = auxPalabra->sig; 
+        }
+
+        cout << endl;
+        auxLinea= auxLinea->sig;
+        numLinea++; 
+    }
+    
+    return OK;
+
+}
+
+//11
+TipoRetorno AgregarIncorrectasAlDiccionario(){
+    Linea auxLinea = texto.primera;
+
+    // Recorremos todas las líneas del texto
+    while (auxLinea != nullptr) {
+        
+        Palabra auxPalabra = auxLinea->primeraPalabra;
+
+        // Recorremos todas las palabras de la línea actual
+        while (auxPalabra != nullptr) {
+            // Si la palabra NO está en el diccionario...
+            if (!existeEnDiccionario(diccionario, auxPalabra->palabra)) {
+                // ...la insertamos usando la función del ABB que ya tenés
+                IngresarPalabraDiccionario(auxPalabra->palabra);
+            }
+            auxPalabra = auxPalabra->sig; // Avanzamos a la siguiente palabra
+        }
+
+        auxLinea = auxLinea->sig; // Avanzamos a la siguiente línea
+    }
+
+    return OK;
+}
+
 
 int main() {
 
